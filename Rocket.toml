@@ -1,0 +1,2 @@
+[development.databases.timer]
+url="postgres://localhost/timer_development"
