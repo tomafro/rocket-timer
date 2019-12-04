@@ -7,6 +7,7 @@
 mod schema;
 mod models;
 
+use rocket::http::*;
 use self::diesel::prelude::*;
 
 #[database("timer")]
@@ -18,8 +19,16 @@ fn index(db: Database) -> String {
     format!("{:?}", stopwatches.select(diesel::dsl::count_star()).first::<i64>(&db.0))
 }
 
+#[put("/stopwatches/<name>")]
+fn update(db: Database, name: String) -> &'static str {
+    use schema::stopwatches::dsl::*;
+
+    diesel::insert_into(stopwatches).values(&title.eq(name)).execute(&db.0).ok();
+    "Hello World"
+}
+
 fn main() {
     rocket::ignite()
         .attach(Database::fairing())
-        .mount("/", routes![index]).launch();
+        .mount("/", routes![update]).launch();
 }
