@@ -7,7 +7,6 @@
 mod schema;
 mod models;
 
-use rocket::http::*;
 use self::diesel::prelude::*;
 
 #[database("timer")]
@@ -30,5 +29,5 @@ fn update(db: Database, name: String) -> &'static str {
 fn main() {
     rocket::ignite()
         .attach(Database::fairing())
-        .mount("/", routes![update]).launch();
+        .mount("/", routes![index, update]).launch();
 }
