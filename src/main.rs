@@ -8,6 +8,8 @@ mod schema;
 mod models;
 
 use self::diesel::prelude::*;
+use rocket_contrib::templates::Template;
+use std::collections::HashMap;
 
 #[database("timer")]
 struct Database(diesel::pg::PgConnection);
@@ -19,15 +21,18 @@ fn index(db: Database) -> String {
 }
 
 #[put("/stopwatches/<name>")]
-fn update(db: Database, name: String) -> &'static str {
+fn update(db: Database, name: String) -> Template {
     use schema::stopwatches::dsl::*;
 
     diesel::insert_into(stopwatches).values(&title.eq(name)).execute(&db.0).ok();
-    "Hello World"
+    "Hello World";
+    let context: HashMap<String, String> = HashMap::new();
+    Template::render("index", &context)
 }
 
 fn main() {
     rocket::ignite()
         .attach(Database::fairing())
+        .attach(Template::fairing())
         .mount("/", routes![index, update]).launch();
 }

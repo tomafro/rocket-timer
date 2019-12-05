@@ -1,2 +1,4 @@
+[global]
+template_dir="templates/"
 [development.databases.timer]
 url="postgres://localhost/timer_development"
