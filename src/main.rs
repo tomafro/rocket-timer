@@ -14,10 +14,13 @@ use std::collections::HashMap;
 #[database("timer")]
 struct Database(diesel::pg::PgConnection);
 
-#[get("/")]
-fn index(db: Database) -> String {
+#[get("/stopwatches")]
+fn index(db: Database) -> Template {
     use schema::stopwatches::dsl::*;
-    format!("{:?}", stopwatches.select(diesel::dsl::count_star()).first::<i64>(&db.0))
+    let mut context: HashMap<&str, i64> = HashMap::new();
+    let count = stopwatches.select(diesel::dsl::count_star()).first::<i64>(&db.0);
+    context.insert("count", count.unwrap());
+    Template::render("index", &context)
 }
 
 #[put("/stopwatches/<name>")]
@@ -25,9 +28,8 @@ fn update(db: Database, name: String) -> Template {
     use schema::stopwatches::dsl::*;
 
     diesel::insert_into(stopwatches).values(&title.eq(name)).execute(&db.0).ok();
-    "Hello World";
     let context: HashMap<String, String> = HashMap::new();
-    Template::render("index", &context)
+    Template::render("update", &context)
 }
 
 fn main() {
