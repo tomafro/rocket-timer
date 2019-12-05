@@ -6,10 +6,13 @@
 
 mod schema;
 mod models;
+mod fairings;
 
 use self::diesel::prelude::*;
 use rocket_contrib::templates::Template;
 use std::collections::HashMap;
+use fairings::{ServerTiming,RequestIdHeader};
+use uuid::Uuid;
 
 #[database("timer")]
 struct Database(diesel::pg::PgConnection);
@@ -34,6 +37,8 @@ fn update(db: Database, name: String) -> Template {
 
 fn main() {
     rocket::ignite()
+        .attach(ServerTiming)
+        .attach(RequestIdHeader)
         .attach(Database::fairing())
         .attach(Template::fairing())
         .mount("/", routes![index, update]).launch();
