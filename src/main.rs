@@ -12,25 +12,31 @@ use self::diesel::prelude::*;
 use rocket_contrib::templates::Template;
 use std::collections::HashMap;
 use fairings::{ServerTiming,RequestIdHeader};
-use uuid::Uuid;
+use schema::stopwatches;
 
 #[database("timer")]
 struct Database(diesel::pg::PgConnection);
 
 #[get("/stopwatches")]
 fn index(db: Database) -> Template {
-    use schema::stopwatches::dsl::*;
     let mut context: HashMap<&str, i64> = HashMap::new();
-    let count = stopwatches.select(diesel::dsl::count_star()).first::<i64>(&db.0);
+    let count = schema::stopwatches::dsl::stopwatches.select(diesel::dsl::count_star()).first::<i64>(&db.0);
     context.insert("count", count.unwrap());
     Template::render("index", &context)
 }
 
-#[put("/stopwatches/<name>")]
-fn update(db: Database, name: String) -> Template {
-    use schema::stopwatches::dsl::*;
+#[derive(Insertable)]
+#[table_name = "stopwatches"]
+struct NewStopwatch<'a> {
+    identifier: &'a str,
+    name: &'a str,
+}
 
-    diesel::insert_into(stopwatches).values(&title.eq(name)).execute(&db.0).ok();
+
+#[put("/stopwatches/<identifier>")]
+fn update(db: Database, identifier: String) -> Template {
+    let stopwatch = NewStopwatch { identifier: &identifier.to_string(), name: "a"};
+    diesel::insert_into(schema::stopwatches::dsl::stopwatches).values(&stopwatch).execute(&db.0).ok();
     let context: HashMap<String, String> = HashMap::new();
     Template::render("update", &context)
 }

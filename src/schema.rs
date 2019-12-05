@@ -1,6 +1,9 @@
 table! {
     stopwatches (id) {
         id -> Int4,
-        title -> Varchar,
+        identifier -> Varchar,
+        name -> Varchar,
+        created_at -> Nullable<Timestamptz>,
+        updated_at -> Nullable<Timestamptz>,
     }
 }

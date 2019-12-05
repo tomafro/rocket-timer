@@ -2,5 +2,11 @@
 
 CREATE TABLE stopwatches (
   id SERIAL PRIMARY KEY,
-  title VARCHAR NOT NULL
-)
+  identifier VARCHAR NOT NULL,
+  name VARCHAR NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT current_timestamp,
+  updated_at TIMESTAMPTZ DEFAULT current_timestamp
+);
+
+CREATE UNIQUE INDEX ON stopwatches (identifier);
+SELECT diesel_manage_updated_at('stopwatches');
