@@ -3,4 +3,4 @@ template_dir="templates/"
 [development.databases.timer]
 url="postgres://localhost/timer_development"
 [production.databases.timer]
-url="postgres://localhost/timer_development"
+url="postgres://tom@host.docker.internal/timer_development"
