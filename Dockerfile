@@ -23,4 +23,5 @@ COPY --from=0 /rust/target/release/rocket-timer /app/bin/rocket-timer
 COPY --from=0 /rust/Rocket.toml /app/bin/Rocket.toml
 
 EXPOSE 8000
+WORKDIR /app/bin
 ENTRYPOINT ["/app/bin/rocket-timer"]

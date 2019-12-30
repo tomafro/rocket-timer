@@ -1,7 +1,7 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
-#[macro_use] extern crate rocket_contrib;
 #[macro_use] extern crate rocket;
+#[macro_use] extern crate rocket_contrib;
 #[macro_use]
 extern crate diesel;
 extern crate openssl;
@@ -26,16 +26,19 @@ fn prepare_environment() {
     openssl_probe::init_ssl_cert_env_vars();
 }
 
-fn launch_rocket() {
-    rocket::ignite()
+fn prepare() -> rocket::Rocket {
+    ::rocket::ignite()
         .attach(ServerTiming)
         .attach(RequestIdHeader)
         .attach(Database::fairing())
         .attach(Template::fairing())
-        .mount("/", stopwatches::routes()).launch();
+}
+
+fn rocket() -> rocket::Rocket {
+    prepare().mount("/stopwatches", stopwatches::routes())
 }
 
 fn main() {
     prepare_environment();
-    launch_rocket();
+    rocket().launch();
 }
